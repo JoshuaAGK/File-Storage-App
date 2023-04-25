@@ -21,14 +21,14 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
 
     const filesCollection = client.db(teamName).collection("files");
     const insertResult = await filesCollection.insertOne({
+        _id: response,
         path: path,
         fileName: fileName,
-        uuid: response,
         uploadedOn: new Date().toISOString(),
         uploader: uid
     });
 
-    res.send("ok");
+    res.send(insertResult);
 })
 
 export default router;
