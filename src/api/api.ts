@@ -3,6 +3,7 @@ import { Router } from 'express';
 const router: Router = express.Router();
 const multer = require('multer');
 import writeFile from '../services/writeFile';
+import readFile from '../services/readfile';
 import { client } from "../config/mongodb";
 
 router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
@@ -29,6 +30,41 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     });
 
     res.send(insertResult);
+})
+
+router.get("/getfile/:fileID", multer().any(), async (req: any, res: any) => {
+    const fileID = req.params.fileID;
+
+    const databases = await client.db().admin().listDatabases();
+    const globalDatabases = ["admin", "local"];
+    const teamDatabases = databases.databases.filter((database: any) => !globalDatabases.includes(database.name.toLowerCase())).map((database: any) => database.name);
+
+    let file: { path: string; fileName: string; uploadedOn: string; uploader: string; } | undefined;
+
+    // Iterate through teams to find the requested file.
+    for (const teamDatabase of teamDatabases) {
+        const filesCollection = await client.db(teamDatabase).collection("files");
+        const foundFile = await filesCollection.findOne({ _id: fileID });
+        if (foundFile) {
+            file = foundFile;
+            break;
+        }
+    }
+
+    if (!file) {
+        res.send(404);
+        return false;
+    }
+
+    const fullPath = file.path + file.fileName;
+    
+    res.set({
+        'Content-Disposition': `attachment; filename="${file.fileName}"`,
+    });
+
+    const data = await readFile(fullPath, null);
+
+    res.send(data);
 })
 
 export default router;
