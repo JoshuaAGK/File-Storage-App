@@ -5,8 +5,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://unpkg.com/axios@1.0/dist/axios.min.js"></script>
+    <script>
+        async function uploadFile() {
+            const fileInput = document.querySelector("#file-input");
+            const file = fileInput.files[0];
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('uid', "6448377c3ffcda529a232e0b");
+            formData.append('team', "Team1");
+
+            axios.post("/uploadfile", formData)
+        }
+    </script>
 </head>
 <body>
-    
+    <input type="file" name="file" id="file-input"/>
+    <button onclick="uploadFile()">Upload</button>
 </body>
 </html>
