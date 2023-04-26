@@ -18,10 +18,34 @@
 
             axios.post("/uploadfile", formData)
         }
+
+        async function login() {
+            const email = document.querySelector("#login-email").value;
+            const password = document.querySelector("#login-password").value;
+            const passhash = await createHash(password);
+
+            const formData = { email, passhash };
+
+            const result = await axios.post("/login", formData);
+            console.log(result);
+        }
+
+        async function createHash(string) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(string);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hash;
+        }
     </script>
 </head>
 <body>
     <input type="file" name="file" id="file-input"/>
     <button onclick="uploadFile()">Upload</button>
+    <br/>
+    <input type="email" name="login-email" id="login-email" placeholder="Email" value="JoshuaAGKelley@gmail.com" autocomplete="off"/>
+    <input type="password" name="login-password" id="login-password" placeholder="Password" value="password" autocomplete="off"/>
+    <button onclick="login()">Log in</button>
 </body>
 </html>

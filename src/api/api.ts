@@ -32,7 +32,7 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     res.send(insertResult);
 })
 
-router.get("/getfile/:fileID", multer().any(), async (req: any, res: any) => {
+router.get("/getfile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const filePasshash = req.query.passhash;
 
@@ -72,6 +72,42 @@ router.get("/getfile/:fileID", multer().any(), async (req: any, res: any) => {
     const fullPath = file.path + file.fileName;
     const data = await readFile(fullPath);
     res.send(data);
+})
+
+router.post("/login", async (req: any, res: any) => {
+    const email = req.body.email.toLowerCase();
+    const passhash = req.body.passhash;
+
+    let user: { fname: string, lname: string, role: string, permissions: { read: boolean; write: boolean; }; email: string; passhash: string } | undefined;
+
+    // Get list of all teams
+    const databases = await client.db().admin().listDatabases();
+    const globalDatabases = ["admin", "local"];
+    const teamDatabases = databases.databases.filter((database: any) => !globalDatabases.includes(database.name.toLowerCase())).map((database: any) => database.name);
+
+    // Iterate through teams to find the user to authenticate.
+    for (const teamDatabase of teamDatabases) {
+        const usersCollection = await client.db(teamDatabase).collection("users");
+        const foundUser = await usersCollection.findOne({ email: email });
+        if (foundUser) {
+            user = foundUser;
+            break;
+        }
+    }
+
+    // Check user was found
+    if (!user) {
+        res.sendStatus(404);
+        return false;
+    }
+
+    // Check password is correct
+    if (user.passhash != passhash) {
+        res.sendStatus(401);
+        return false;
+    }
+
+    res.send("Authorised");
 })
 
 export default router;
