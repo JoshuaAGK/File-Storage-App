@@ -24,8 +24,9 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
 router.get("/getfile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const filePasshash = req.query.passhash;
+    const token = req.cookies.jwt;
 
-    const response = await getfile(fileID, filePasshash);
+    const response = await getfile(fileID, filePasshash, token);
 
     if (response.responseCode === 200) {
         // File was found so set appropriate headers
