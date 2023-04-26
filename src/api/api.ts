@@ -5,6 +5,8 @@ const multer = require('multer');
 import writeFile from '../services/writeFile';
 import readFile from '../services/readfile';
 import { client } from "../config/mongodb";
+const jwt = require('jsonwebtoken');
+
 
 router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     const fileName = req.files[0].originalname;
@@ -36,7 +38,7 @@ router.get("/getfile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const filePasshash = req.query.passhash;
 
-    let file: { path: string; fileName: string; uploadedOn: string; uploader: string; passhash?: string; } | undefined;
+    let file: { _id: {}; path: string; fileName: string; uploadedOn: string; uploader: string; passhash?: string; } | undefined;
 
     // Get list of all teams
     const databases = await client.db().admin().listDatabases();
@@ -78,7 +80,8 @@ router.post("/login", async (req: any, res: any) => {
     const email = req.body.email.toLowerCase();
     const passhash = req.body.passhash;
 
-    let user: { fname: string, lname: string, role: string, permissions: { read: boolean; write: boolean; }; email: string; passhash: string } | undefined;
+    let user: { _id: {}; fname: string, lname: string, role: string, permissions: { read: boolean; write: boolean; }; email: string; passhash: string } | undefined;
+    let teamName = "";
 
     // Get list of all teams
     const databases = await client.db().admin().listDatabases();
@@ -90,6 +93,7 @@ router.post("/login", async (req: any, res: any) => {
         const usersCollection = await client.db(teamDatabase).collection("users");
         const foundUser = await usersCollection.findOne({ email: email });
         if (foundUser) {
+            teamName = teamDatabase;
             user = foundUser;
             break;
         }
@@ -107,7 +111,16 @@ router.post("/login", async (req: any, res: any) => {
         return false;
     }
 
-    res.send("Authorised");
+    const uid = String(user._id);
+    const payload = { teamName, uid, email };
+    const token = await generateJWT(payload);
+
+    res.send(token);
 })
+
+function generateJWT(props: { teamName: string; uid: string; email: string; }) {
+    const token = jwt.sign(props, process.env.TOKEN_SECRET);
+    return token;
+}
 
 export default router;

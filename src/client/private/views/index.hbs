@@ -22,12 +22,29 @@
         async function login() {
             const email = document.querySelector("#login-email").value;
             const password = document.querySelector("#login-password").value;
-            const passhash = await createHash(password);
 
-            const formData = { email, passhash };
+            try {
+                const passhash = await createHash(password);
+                const formData = { email, passhash };
 
-            const result = await axios.post("/login", formData);
-            console.log(result);
+                const result = await axios.post("/login", formData);
+                console.log(result);
+
+                const jwt = result.data;
+
+                document.cookie = `jwt=${jwt}; expires=Fri, 31 Dec 9999 23:59:59 UTC; path=/`;
+            } catch (error) {
+                switch (error.response.status) {
+                    case 401:
+                        alert("Incorrect password");
+                        break;
+                    case 404:
+                        alert(`No user with email ${email}`);
+                        break;
+                    default:
+                        alert("Unable to authorise user");
+                }
+            }
         }
 
         async function createHash(string) {
