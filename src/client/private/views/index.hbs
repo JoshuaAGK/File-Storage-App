@@ -58,6 +58,20 @@
             }
         }
 
+        async function signup() {
+            const email = document.querySelector("#login-email").value;
+            const password = document.querySelector("#login-password").value;
+            const passhash = await createHash(password);
+
+            const formData = { email, passhash };
+
+            const result = await axios.post("/signup", formData, {
+                validateStatus: false
+            })
+
+            console.log(result);
+        }
+
         async function createHash(string) {
             const encoder = new TextEncoder();
             const data = encoder.encode(string);
@@ -79,6 +93,7 @@
     <input type="email" name="login-email" id="login-email" placeholder="Email" value="JoshuaAGKelley@gmail.com" autocomplete="off"/>
     <input type="password" name="login-password" id="login-password" placeholder="Password" value="password" autocomplete="off"/>
     <button onclick="login()">Log in</button>
+    <button onclick="signup()">Sign up</button>
     {{#if tokenData}}
     <p>Logged in as {{tokenData.fname}} {{tokenData.lname}}</p>
     {{/if}}

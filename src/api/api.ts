@@ -5,6 +5,7 @@ const router: Router = express.Router();
 import login from '../services/login';
 import getfile from '../services/getfile';
 import uploadFile from '../services/uploadfile';
+import signup from '../services/signup';
 import UploadFileProps from '../interfaces/uploadFileProps';
 const jwt = require('jsonwebtoken');
 
@@ -46,6 +47,17 @@ router.post("/login", async (req: any, res: any) => {
 
 router.post("/logout", async (req: any, res: any) => {
     res.status(301).send("/");
+})
+
+router.post("/signup", async (req: any, res: any) => {
+    const fname = req.body.fname ?? "Fname";
+    const lname = req.body.lname ?? "Lname";
+    const email = req.body.email.toLowerCase();
+    const passhash = req.body.passhash;
+
+    const response = await signup(fname, lname, email, passhash);
+
+    res.status(response.responseCode).send(response.data);
 })
 
 router.get("/", async (req: any, res: any) => {

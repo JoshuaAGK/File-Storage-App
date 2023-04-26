@@ -1,30 +1,27 @@
+import { ObjectId } from "mongodb";
 import { client } from "../config/mongodb";
 import HTTPResponse from "../interfaces/httpResponse";
 import generateJWT from '../services/generateJWT';
+import User from "../classes/user";
 
 async function login(email: string, passhash: string): Promise<HTTPResponse> {
 
-    let user: { _id: {}; fname: string, lname: string, role: string, permissions: { read: boolean; write: boolean; }; email: string; passhash: string } | undefined;
-    let teamName = "";
+    let user = new User;
 
     // Get list of all teams
     const databases = await client.db().admin().listDatabases();
-    const globalDatabases = ["admin", "local"];
+    const globalDatabases = ["global", "admin", "local"];
     const teamDatabases = databases.databases.filter((database: any) => !globalDatabases.includes(database.name.toLowerCase())).map((database: any) => database.name);
 
-    // Iterate through teams to find the user to authenticate.
-    for (const teamDatabase of teamDatabases) {
-        const usersCollection = await client.db(teamDatabase).collection("users");
-        const foundUser = await usersCollection.findOne({ email: email });
-        if (foundUser) {
-            teamName = teamDatabase;
-            user = foundUser;
-            break;
-        }
+    // Find user details by email
+    const usersCollection = await client.db("Global").collection("users");
+    const foundUser = await usersCollection.findOne({ email: email });
+    if (foundUser) {
+        user = foundUser;
     }
 
     // Check user was found
-    if (!user) {
+    if (!user._id) {
         return {
             responseCode: 404,
             data: false
@@ -39,15 +36,18 @@ async function login(email: string, passhash: string): Promise<HTTPResponse> {
         }
     }
 
+    // Iterate through teams to find which team user belongs to
+    for (const teamDatabase of teamDatabases) {
+        const usersCollection = await client.db(teamDatabase).collection("users");
+        const foundUser = await usersCollection.findOne({ _id: new ObjectId(String(user._id)) });
+        if (foundUser) {
+            user.teamName = teamDatabase;
+            break;
+        }
+    }
+
     // Create JWT from user details
-    const payload = {
-        fname: user.fname,
-        lname: user.lname,
-        teamName: teamName,
-        uid: String(user._id),
-        email: email
-    };
-    const token = await generateJWT(payload);
+    const token = await generateJWT(user);
     
     return {
         responseCode: 200,
