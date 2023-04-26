@@ -44,6 +44,10 @@ router.post("/login", async (req: any, res: any) => {
     res.status(response.responseCode).send(response.data);
 })
 
+router.post("/logout", async (req: any, res: any) => {
+    res.status(301).send("/");
+})
+
 router.get("/", async (req: any, res: any) => {
     const token = req.cookies.jwt;
     let props: { tokenData?: {} } = {};

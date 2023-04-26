@@ -47,6 +47,17 @@
             }
         }
 
+        async function logout() {
+            const result = await axios.post("/logout", {}, {
+                validateStatus: false
+            })
+
+            if (result.status === 301) {
+                deleteCookie("jwt");
+                window.location.href = result.data;
+            }
+        }
+
         async function createHash(string) {
             const encoder = new TextEncoder();
             const data = encoder.encode(string);
@@ -54,6 +65,10 @@
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
             return hash;
+        }
+
+        function deleteCookie(cookieName) {
+            document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
         }
     </script>
 </head>
@@ -67,5 +82,6 @@
     {{#if tokenData}}
     <p>Logged in as {{tokenData.fname}} {{tokenData.lname}}</p>
     {{/if}}
+    <button onclick="logout()">Log out</button>
 </body>
 </html>
