@@ -9,6 +9,7 @@ async function uploadFile(props: UploadFileProps): Promise<HTTPResponse> {
     const teamName = props.teamName;
     const uid = props.uid;
     const path = `filestore/${teamName}/`;
+    const size = props.size;
 
     const response = await writeFile(path, fileName, fileBuffer);
 
@@ -26,7 +27,8 @@ async function uploadFile(props: UploadFileProps): Promise<HTTPResponse> {
         path: path,
         fileName: fileName,
         uploadedOn: new Date().toISOString(),
-        uploader: uid
+        uploader: uid,
+        size: size
     });
 
     return {

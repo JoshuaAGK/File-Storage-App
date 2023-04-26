@@ -2,20 +2,24 @@ const express = require('express');
 const multer = require('multer');
 import { Router } from 'express';
 const router: Router = express.Router();
+const jwt = require('jsonwebtoken');
 import login from '../services/login';
 import getfile from '../services/getfile';
 import uploadFile from '../services/uploadfile';
 import signup from '../services/signup';
 import UploadFileProps from '../interfaces/uploadFileProps';
-const jwt = require('jsonwebtoken');
+import getfiles from '../services/getfiles';
 
 router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     const props: UploadFileProps = {
         fileName: req.files[0].originalname,
         fileBuffer: req.files[0].buffer,
         teamName: req.body.teamName,
-        uid: req.body.uid
+        uid: req.body.uid,
+        size: req.files[0].size
     }
+
+    console.log(req.files[0]);
 
     const response = await uploadFile(props);
     res.status(response.responseCode).send(response.data);
@@ -72,6 +76,12 @@ router.get("/", async (req: any, res: any) => {
     })
 
     res.render("index", { layout: "main", ...props });
-});
+})
+
+router.get("/getfiles", async (req: any, res: any) => {
+    const token = req.cookies.jwt;
+    const response = await getfiles(token);
+    res.status(response.responseCode).send(response.data);
+})
 
 export default router;
