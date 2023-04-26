@@ -64,5 +64,8 @@
     <input type="email" name="login-email" id="login-email" placeholder="Email" value="JoshuaAGKelley@gmail.com" autocomplete="off"/>
     <input type="password" name="login-password" id="login-password" placeholder="Password" value="password" autocomplete="off"/>
     <button onclick="login()">Log in</button>
+    {{#if tokenData}}
+    <p>Logged in as {{tokenData.fname}} {{tokenData.lname}}</p>
+    {{/if}}
 </body>
 </html>

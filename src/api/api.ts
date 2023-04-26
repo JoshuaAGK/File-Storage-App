@@ -111,14 +111,20 @@ router.post("/login", async (req: any, res: any) => {
         return false;
     }
 
-    const uid = String(user._id);
-    const payload = { teamName, uid, email };
+    // Create JWT from user details
+    const payload = {
+        fname: user.fname,
+        lname: user.lname,
+        teamName: teamName,
+        uid: String(user._id),
+        email: email
+    };
     const token = await generateJWT(payload);
 
     res.send(token);
 })
 
-function generateJWT(props: { teamName: string; uid: string; email: string; }) {
+function generateJWT(props: { fname: string; lname: string; teamName: string; uid: string; email: string; }) {
     const token = jwt.sign(props, process.env.TOKEN_SECRET);
     return token;
 }
