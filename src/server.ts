@@ -8,7 +8,6 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser())
 app.use('/', router);
-app.listen(3000);
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/client/private/views/');
 
