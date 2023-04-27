@@ -9,6 +9,7 @@ import uploadFile from '../services/uploadfile';
 import signup from '../services/signup';
 import UploadFileProps from '../interfaces/uploadFileProps';
 import getfiles from '../services/getfiles';
+import deletefile from '../services/deletefile';
 
 router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     const props: UploadFileProps = {
@@ -38,6 +39,15 @@ router.get("/getfile/:fileID", async (req: any, res: any) => {
             'Content-Disposition': `attachment; filename="${response.extras}"`,
         });
     }
+
+    res.status(response.responseCode).send(response.data);
+})
+
+router.all("/deletefile/:fileID", async (req: any, res: any) => {
+    const fileID = req.params.fileID;
+    const token = req.cookies.jwt;
+
+    const response = await deletefile(fileID, token);
 
     res.status(response.responseCode).send(response.data);
 })
