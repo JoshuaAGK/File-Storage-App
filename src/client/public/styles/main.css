@@ -28,7 +28,7 @@ header {
 }
 
 main {
-    height: calc(100vh - 64px);
+    height: calc(100vh - 128px);
     background-color: #5686CD;
     display: flex;
     flex-direction: column;
@@ -119,4 +119,18 @@ td:nth-of-type(4) {
     border: none;
     cursor: pointer;
     font-weight: bold;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    height: 64px;
+    width: 100vw;
+    background-color: #5686CD;
+    border-top: 1px solid #7DAFD8;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+    padding-right: 1rem;
 }

@@ -241,3 +241,14 @@ async function register() {
 function deleteCookie(cookieName) {
     document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
+
+async function logout() {   
+    const result = await axios.post("/logout", {}, {
+        validateStatus: false
+    })
+
+    if (result.status === 301) {
+        deleteCookie("jwt");
+        window.location.href = result.data;
+    }
+}

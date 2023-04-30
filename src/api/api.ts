@@ -49,12 +49,9 @@ router.get("/getfile/:fileID", async (req: any, res: any) => {
             }
         })
 
-        console.log(props);
-
-        res.render("download", { layout: "main", ...props });
+        res.render("download", { layout: "main", title: response.extras, ...props });
     } else {
         if (response.responseCode === 200) {
-            console.log("big dicks");
             // Set appropriate headers for downloading files
             res.set({
                 'Content-Disposition': `attachment; filename="${response.extras}"`,
@@ -107,7 +104,7 @@ router.get("/", async (req: any, res: any) => {
         }
     })
 
-    res.render("landing", { layout: "main", ...props });
+    res.render("landing", { layout: "main", title: "Application", ...props });
 })
 
 router.get("/login", async (req: any, res: any) => {
@@ -120,20 +117,7 @@ router.get("/login", async (req: any, res: any) => {
         }
     })
 
-    res.render("login", { layout: "main", ...props });
-})
-
-router.get("/test", async (req: any, res: any) => {
-    const token = req.cookies.jwt;
-    let props: { tokenData?: {} } = {};
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
-        if(!err) {
-            props.tokenData = verifiedJwt
-        }
-    })
-
-    res.render("test", { layout: "main", ...props });
+    res.render("login", { layout: "main", title: "Log in", ...props });
 })
 
 router.get("/register", async (req: any, res: any) => {
@@ -146,7 +130,7 @@ router.get("/register", async (req: any, res: any) => {
         }
     })
 
-    res.render("register", { layout: "main", ...props });
+    res.render("register", { layout: "main", title: "Register", ...props });
 })
 
 router.get("/app", async (req: any, res: any) => {
@@ -159,7 +143,7 @@ router.get("/app", async (req: any, res: any) => {
         }
     })
 
-    res.render("app", { layout: "main", ...props });
+    res.render("app", { layout: "main", title: "App", ...props });
 })
 
 router.get("/getfiles", async (req: any, res: any) => {
