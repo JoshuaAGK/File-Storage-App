@@ -44,8 +44,6 @@ async function deletefile(fileID: string, token: string): Promise<HTTPResponse> 
         }
     }
 
-    console.log(foundFile);
-
     let deletedFile = { deletedCount: 0 };
     
     // Delete file

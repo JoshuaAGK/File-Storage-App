@@ -4,8 +4,7 @@ window.addEventListener("load", async () => {
         return;
     }
 
-    const allfiles = await axios.get("/getfiles");
-    console.log(allfiles.data);
+    const allfiles = await axios.get("/api/getfiles");
 
     const fileInput = document.querySelector("#file-input");
 
@@ -44,7 +43,7 @@ window.addEventListener("load", async () => {
         formData.append('uid', jwt.uid);
         formData.append('teamName', jwt.teamName);
 
-        axios.post("/uploadfile", formData);
+        axios.post("/api/uploadfile", formData);
         location.reload();
     };
 });
@@ -114,13 +113,11 @@ async function downloadFile(that, passhash = null) {
     }
     
     const fileID = that.id;
-    const result = await axios.get(`/getfile/${fileID}?passhash=${passhash}`, { responseType: "blob" });
-    console.log(result);
+    const result = await axios.get(`/api/getfile/${fileID}?passhash=${passhash}`, { responseType: "blob" });
 
     const contentHeader = result.headers["content-disposition"];
     const fileName = contentHeader.substring(contentHeader.indexOf('filename=\"') + 10, contentHeader.lastIndexOf('\"'));
 
-    console.log(fileName);
 
     const url = window.URL.createObjectURL(new Blob([result.data]));
     const link = document.createElement('a');
@@ -137,8 +134,7 @@ async function uploadFile() {
 async function deleteFile(that) {
     that = that.parentElement.parentElement;
 
-    const result = await axios.post(`/deletefile/${that.id}`);
-    console.log(result);
+    const result = await axios.post(`/api/deletefile/${that.id}`);
 
     const deleteRow = document.getElementById(that.id);
     deleteRow.remove();
@@ -148,11 +144,11 @@ async function deleteFile(that) {
 async function setPassword(that) {
     that = that.parentElement.parentElement;
 
-    let result = await axios.get(`/passhash/${that.id}`);
+    let result = await axios.get(`/api/passhash/${that.id}`);
     const newPassword = window.prompt(`Enter new file password\nCurrent password hash (SHA-256):\n${result.data || "No password set"}`);
     const newPasshash = newPassword ? await createHash(newPassword) : "";
 
-    result = await axios.post(`/passhash/${that.id}`, {
+    result = await axios.post(`/api/passhash/${that.id}`, {
         passhash: newPasshash
     });
 }
@@ -160,7 +156,7 @@ async function setPassword(that) {
 async function getShareLink(that) {
     that = that.parentElement.parentElement;
 
-    const result = await axios.get(`/passhash/${that.id}`);
+    const result = await axios.get(`/api/passhash/${that.id}`);
 
     const passhash = result.data;
 
@@ -190,10 +186,9 @@ async function login() {
         const passhash = await createHash(password);
         const formData = { email, passhash };
 
-        const result = await axios.post("/login", formData, {
+        const result = await axios.post("/api/login", formData, {
             validateStatus: false
         })
-        console.log(result);
 
         switch (result.status) {
             case 200:
@@ -218,11 +213,10 @@ async function register() {
 
     const formData = { fname, lname, email, passhash };
 
-    const result = await axios.post("/signup", formData, {
+    const result = await axios.post("/api/signup", formData, {
         validateStatus: false
     })
 
-    console.log(result);
 
     switch (result.status) {
         case 200:
@@ -243,7 +237,7 @@ function deleteCookie(cookieName) {
 }
 
 async function logout() {   
-    const result = await axios.post("/logout", {}, {
+    const result = await axios.post("/api/logout", {}, {
         validateStatus: false
     })
 

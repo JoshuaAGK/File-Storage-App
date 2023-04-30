@@ -20,8 +20,6 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
         size: req.files[0].size
     }
 
-    console.log(req.files[0]);
-
     const response = await uploadFile(props);
     res.status(response.responseCode).send(response.data);
 })
@@ -92,58 +90,6 @@ router.post("/signup", async (req: any, res: any) => {
     const response = await signup(fname, lname, email, passhash);
 
     res.status(response.responseCode).send(response.data);
-})
-
-router.get("/", async (req: any, res: any) => {
-    const token = req.cookies.jwt;
-    let props: { tokenData?: {} } = {};
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
-        if(!err) {
-            props.tokenData = verifiedJwt
-        }
-    })
-
-    res.render("landing", { layout: "main", title: "Application", ...props });
-})
-
-router.get("/login", async (req: any, res: any) => {
-    const token = req.cookies.jwt;
-    let props: { tokenData?: {} } = {};
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
-        if(!err) {
-            props.tokenData = verifiedJwt
-        }
-    })
-
-    res.render("login", { layout: "main", title: "Log in", ...props });
-})
-
-router.get("/register", async (req: any, res: any) => {
-    const token = req.cookies.jwt;
-    let props: { tokenData?: {} } = {};
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
-        if(!err) {
-            props.tokenData = verifiedJwt
-        }
-    })
-
-    res.render("register", { layout: "main", title: "Register", ...props });
-})
-
-router.get("/app", async (req: any, res: any) => {
-    const token = req.cookies.jwt;
-    let props: { tokenData?: {} } = {};
-
-    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
-        if(!err) {
-            props.tokenData = verifiedJwt
-        }
-    })
-
-    res.render("app", { layout: "main", title: "App", ...props });
 })
 
 router.get("/getfiles", async (req: any, res: any) => {
