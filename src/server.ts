@@ -10,6 +10,7 @@ app.use(cookieParser())
 app.use('/', router);
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/client/private/views/');
+app.use(express.static(__dirname + "/client/public"));
 
 app.engine('.hbs', handlebars.engine({
     extname: ".hbs",

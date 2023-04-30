@@ -22,7 +22,7 @@ async function getfiles(token: string): Promise<HTTPResponse> {
 
     const filesCollection = await client.db(user.teamName).collection("files");
     const foundFiles = await filesCollection.find({}).toArray();
-    const mappedFiles = foundFiles.map((file: File) => { return { fileName: file.fileName, size: file.size } })
+    const mappedFiles = foundFiles.map((file: File) => { return { fileName: file.fileName, size: file.size, uploadedOn: file.uploadedOn, _id: file._id } })
 
     return {
         responseCode: 200,

@@ -12,7 +12,7 @@ async function getfile(fileID: string, filePasshash: string, token: string): Pro
 
     // Get list of all teams
     const databases = await client.db().admin().listDatabases();
-    const globalDatabases = ["admin", "local"];
+    const globalDatabases = ["global", "admin", "local"];
     const teamDatabases = databases.databases.filter((database: any) => !globalDatabases.includes(database.name.toLowerCase())).map((database: any) => database.name);
 
     // Iterate through teams to find the requested file.
@@ -26,16 +26,28 @@ async function getfile(fileID: string, filePasshash: string, token: string): Pro
     }
 
     // Check file was found
-    if (!file) {
+    if (file.path == "") {
         return {
             responseCode: 404,
             data: false
         }
     }
 
-    // If file is password protected, check password is correct
-    if (file.passhash && file.passhash === filePasshash) {
+    // If file is password protected, check password is correct. If no password, return file.
+    if (file.passhash) {
+        if (file.passhash === filePasshash) {
+            return fileContents(file);
+        }
+    } else {
         return fileContents(file);
+    }
+
+    // If file is password protected, check password is correct
+    if (!token) {
+        return {
+            responseCode: 401,
+            data: false
+        }
     }
 
     // Get user details from JWT

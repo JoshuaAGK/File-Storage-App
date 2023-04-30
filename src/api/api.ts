@@ -85,12 +85,76 @@ router.get("/", async (req: any, res: any) => {
         }
     })
 
-    res.render("index", { layout: "main", ...props });
+    res.render("landing", { layout: "main", ...props });
+})
+
+router.get("/login", async (req: any, res: any) => {
+    const token = req.cookies.jwt;
+    let props: { tokenData?: {} } = {};
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
+        if(!err) {
+            props.tokenData = verifiedJwt
+        }
+    })
+
+    res.render("login", { layout: "main", ...props });
+})
+
+router.get("/test", async (req: any, res: any) => {
+    const token = req.cookies.jwt;
+    let props: { tokenData?: {} } = {};
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
+        if(!err) {
+            props.tokenData = verifiedJwt
+        }
+    })
+
+    res.render("test", { layout: "main", ...props });
+})
+
+router.get("/register", async (req: any, res: any) => {
+    const token = req.cookies.jwt;
+    let props: { tokenData?: {} } = {};
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
+        if(!err) {
+            props.tokenData = verifiedJwt
+        }
+    })
+
+    res.render("register", { layout: "main", ...props });
+})
+
+router.get("/app", async (req: any, res: any) => {
+    const token = req.cookies.jwt;
+    let props: { tokenData?: {} } = {};
+
+    jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
+        if(!err) {
+            props.tokenData = verifiedJwt
+        }
+    })
+
+    res.render("app", { layout: "main", ...props });
 })
 
 router.get("/getfiles", async (req: any, res: any) => {
     const token = req.cookies.jwt;
     const response = await getfiles(token);
+    res.status(response.responseCode).send(response.data);
+})
+
+import filePasshash from '../services/filePasshash';
+
+router.use("/passhash/:fileID", async (req: any, res: any) => {
+    const fileID = req.params.fileID;
+    const token = req.cookies.jwt;
+    const passhash = req.body.passhash;
+
+    const response = await filePasshash(fileID, token, passhash);
+
     res.status(response.responseCode).send(response.data);
 })
 

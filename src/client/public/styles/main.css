@@ -1,0 +1,121 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #141443;
+}
+
+a {
+    text-decoration: none;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+header {
+    height: 64px;
+    background-color: #5686CD;
+    border-bottom: 1px solid #7DAFD8;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+    padding-right: 1rem;
+}
+
+main {
+    height: calc(100vh - 64px);
+    background-color: #5686CD;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    padding-top: 2rem;
+    gap: 1rem;
+}
+
+.big-button {
+    height: 48px;
+    padding: 1rem;
+    border-radius: 15px;
+    background-color: #F3FBFB;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+#logo {
+    max-height: 64px;
+    margin-right: auto;
+    position: relative;
+}
+
+#logo img {
+    max-height: 64px;
+}
+
+table {
+    background-color: white;
+    text-align: left;
+    width: 100%;
+    padding: 1rem;
+    border-spacing: 0 0.25rem;
+    border-radius: 20px;
+    max-width: 900px
+}
+
+tr:not(:last-of-type) {
+    border-bottom: 1px solid black;
+}
+
+.inline-button {
+    border-radius: 10px;
+    background-color: #375EB9;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    height: 1.5rem;
+    padding: 0 0.5rem;
+    align-items: center;
+}
+
+.inline-button img {
+    height: 1rem;
+    width: 1rem;
+    filter: invert(1);
+}
+
+td:nth-of-type(4) {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.25rem;
+}
+
+.login-signup-form {
+    display: flex;
+    flex-direction: column;
+    background-color: #375EB9;
+    padding: 2rem;
+    border-radius: 30px;
+    gap: 1rem;
+}
+
+.login-signup-form input {
+    padding: 1rem;
+    border-radius: 15px;
+    border: none;
+}
+
+.login-signup-form button {
+    padding: 0.5rem;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}

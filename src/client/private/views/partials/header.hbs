@@ -1,0 +1,13 @@
+<header>
+    {{#if showlogo}}
+        <a id="logo" href="/"><img  src="/media/images/Logo.png"/></a>
+    {{/if}}
+    {{#if showupload}}
+        <a href="#" onclick="uploadFile()" class="big-button">Upload file</a>
+        <input type="file" name="file" id="file-input" hidden/>
+    {{/if}}
+    {{#if showlogin}}
+        <a href="/login" class="big-button">Log in</a>
+        <a href="/register" class="big-button">Sign up</a>
+    {{/if}}
+</header>
