@@ -106,11 +106,15 @@ function formatDateString(isoString) {
     return `${year}-${month}-${day} ${hours}:${minutes}`;
 }
 
-async function downloadFile(that) {
-    that = that.parentElement.parentElement;
-    console.log(that);
+async function downloadFile(that, passhash = null) {
+    if (typeof that === "string") {
+        that = { id: that };
+    } else {
+        that = that.parentElement.parentElement;
+    }
+    
     const fileID = that.id;
-    const result = await axios.get(`/getfile/${fileID}`, { responseType: "blob" });
+    const result = await axios.get(`/getfile/${fileID}?passhash=${passhash}`, { responseType: "blob" });
     console.log(result);
 
     const contentHeader = result.headers["content-disposition"];

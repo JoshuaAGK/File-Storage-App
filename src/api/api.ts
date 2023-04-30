@@ -28,19 +28,41 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
 
 router.get("/getfile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
-    const filePasshash = req.query.passhash;
+    const userProvidedPasshash = req.query.passhash;
     const token = req.cookies.jwt;
+    const accept = req.headers["accept"];
 
-    const response = await getfile(fileID, filePasshash, token);
+    const response = await getfile(fileID, userProvidedPasshash, token);
 
-    if (response.responseCode === 200) {
-        // File was found so set appropriate headers
-        res.set({
-            'Content-Disposition': `attachment; filename="${response.extras}"`,
-        });
+    // Different download page for accessing through browser vs GET
+    if (accept.includes("text/html") && response.responseCode === 200) {
+
+        let props: { tokenData?: {}, fileID: string, fileName: string, userProvidedPasshash: string } = {
+            fileID,
+            fileName: response.extras,
+            userProvidedPasshash
+        };
+
+        jwt.verify(token, process.env.TOKEN_SECRET, (err: any, verifiedJwt: any) => {
+            if(!err) {
+                props.tokenData = verifiedJwt
+            }
+        })
+
+        console.log(props);
+
+        res.render("download", { layout: "main", ...props });
+    } else {
+        if (response.responseCode === 200) {
+            console.log("big dicks");
+            // Set appropriate headers for downloading files
+            res.set({
+                'Content-Disposition': `attachment; filename="${response.extras}"`,
+            });
+        }
+        
+        res.status(response.responseCode).send(response.data);
     }
-
-    res.status(response.responseCode).send(response.data);
 })
 
 router.all("/deletefile/:fileID", async (req: any, res: any) => {
