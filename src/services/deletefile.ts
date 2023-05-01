@@ -5,6 +5,13 @@ import { ObjectId } from "mongodb";
 import User from "../classes/user";
 import { unlink } from "fs";
 
+
+/**
+ * Delete a specific file by ID.
+ * @param {string} fileID
+ * @param {string} token
+ * @returns {Promise<HTTPResponse>}
+ */
 async function deletefile(fileID: string, token: string): Promise<HTTPResponse> {
     let user = new User;
 

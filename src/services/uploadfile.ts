@@ -3,6 +3,12 @@ import { client } from "../config/mongodb";
 import UploadFileProps from '../interfaces/uploadFileProps';
 import HTTPResponse from '../interfaces/httpResponse';
 
+
+/**
+ * Upload a file to /filestore and save its details in MongoDB.
+ * @param {UploadFileProps} props
+ * @returns {Promise<string>}
+ */
 async function uploadFile(props: UploadFileProps): Promise<HTTPResponse> {
     const fileName = props.fileName;
     const fileBuffer = props.fileBuffer;

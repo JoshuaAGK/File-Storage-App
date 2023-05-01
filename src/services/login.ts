@@ -4,8 +4,14 @@ import HTTPResponse from "../interfaces/httpResponse";
 import generateJWT from '../services/generateJWT';
 import User from "../classes/user";
 
-async function login(email: string, passhash: string): Promise<HTTPResponse> {
 
+/**
+ * Login a user by email and passhash.
+ * @param {string} email
+ * @param {string} passhash
+ * @returns {Promise<HTTPResponse>}
+ */
+async function login(email: string, passhash: string): Promise<HTTPResponse> {
     let user = new User;
 
     // Get list of all teams

@@ -10,7 +10,18 @@ import signup from '../services/signup';
 import UploadFileProps from '../interfaces/uploadFileProps';
 import getfiles from '../services/getfiles';
 import deletefile from '../services/deletefile';
+import filePasshash from '../services/filePasshash';
 
+
+/**
+ * Upload a file to /filestore and save its details in MongoDB.
+ * @route GET /uploadfile
+ * @param {string} fileName
+ * @param {Buffer} fileBuffer
+ * @param {string} teamName
+ * @param {string} uid
+ * @param {number} size
+ */
 router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     const props: UploadFileProps = {
         fileName: req.files[0].originalname,
@@ -24,6 +35,14 @@ router.post("/uploadfile", multer().any(), async (req: any, res: any) => {
     res.status(response.responseCode).send(response.data);
 })
 
+
+/**
+ * Get a specific file by ID.
+ * @route GET /getfile/:fileID
+ * @param {string} fileID
+ * @param {string} userProvidedPasshash
+ * @param {string} token
+ */
 router.get("/getfile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const userProvidedPasshash = req.query.passhash;
@@ -60,6 +79,13 @@ router.get("/getfile/:fileID", async (req: any, res: any) => {
     }
 })
 
+
+/**
+ * Delete a specific file by ID.
+ * @route ALL /deletefile/:fileID
+ * @param {string} fileID
+ * @param {string} token
+ */
 router.all("/deletefile/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const token = req.cookies.jwt;
@@ -69,6 +95,13 @@ router.all("/deletefile/:fileID", async (req: any, res: any) => {
     res.status(response.responseCode).send(response.data);
 })
 
+
+/**
+ * Login a user by email and passhash.
+ * @route POST /login
+ * @param {string} email
+ * @param {string} passhash
+ */
 router.post("/login", async (req: any, res: any) => {
     const email = req.body.email.toLowerCase();
     const passhash = req.body.passhash;
@@ -77,10 +110,24 @@ router.post("/login", async (req: any, res: any) => {
     res.status(response.responseCode).send(response.data);
 })
 
+
+/**
+ * Log out a user.
+ * @route POST /logout
+ */
 router.post("/logout", async (req: any, res: any) => {
     res.status(301).send("/");
 })
 
+
+/**
+ * Register a new user with their details.
+ * @route POST /signup
+ * @param {string} fname
+ * @param {string} lname
+ * @param {string} email
+ * @param {string} passhash
+ */
 router.post("/signup", async (req: any, res: any) => {
     const fname = req.body.fname ?? "Fname";
     const lname = req.body.lname ?? "Lname";
@@ -92,15 +139,28 @@ router.post("/signup", async (req: any, res: any) => {
     res.status(response.responseCode).send(response.data);
 })
 
+
+/**
+ * Get properties of all files belonging to team user is in.
+ * @route POST /getfiles
+ * @param {string} token
+ */
 router.get("/getfiles", async (req: any, res: any) => {
     const token = req.cookies.jwt;
     const response = await getfiles(token);
     res.status(response.responseCode).send(response.data);
 })
 
-import filePasshash from '../services/filePasshash';
 
-router.use("/passhash/:fileID", async (req: any, res: any) => {
+/**
+ * Get or set passhash of a file.
+ * @route POST /passhash/:fileID
+ * @route GET /passhash/:fileID
+ * @param {string} fileID
+ * @param {string} token
+ * @param {string?} passhash
+ */
+router.all("/passhash/:fileID", async (req: any, res: any) => {
     const fileID = req.params.fileID;
     const token = req.cookies.jwt;
     const passhash = req.body.passhash;

@@ -1,8 +1,10 @@
 import * as dotenv from "dotenv";
 const { MongoClient } = require("mongodb");
 
+// Load environment variables
 dotenv.config();
 
+// MongoDB connection config
 const MONGODB_USERNAME = process.env.MONGODB_USERNAME;
 const MONGODB_PASSWORD = process.env.MONGODB_PASSWORD;
 const MONGODB_BASE_URL = process.env.MONGODB_BASE_URL;

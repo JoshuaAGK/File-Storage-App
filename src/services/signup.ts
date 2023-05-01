@@ -3,6 +3,15 @@ import generateJWT from '../services/generateJWT';
 import User from "../classes/user";
 import HTTPResponse from "../interfaces/httpResponse";
 
+
+/**
+ * Register a new user with their details.
+ * @param {string} fname
+ * @param {string} lname
+ * @param {string} email
+ * @param {string} passhash
+ * @returns {Promise<HTTPResponse>}
+ */
 async function signup(fname: string, lname: string, email: string, passhash: string): Promise<HTTPResponse> {
     const usersCollection = client.db("Global").collection("users");
 

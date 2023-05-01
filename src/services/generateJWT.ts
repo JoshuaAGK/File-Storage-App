@@ -1,6 +1,12 @@
 const jwt = require('jsonwebtoken');
 import User from "../classes/user";
 
+
+/**
+ * Create and sign a JWT from user details
+ * @param {User} user 
+ * @returns {string} token - Newly minted JWT
+ */
 function generateJWT(user: User): string {
     const props = {
         fname: user.fname,

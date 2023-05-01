@@ -6,6 +6,15 @@ import { ObjectId } from "mongodb";
 import User from "../classes/user";
 import File from "../classes/file";
 
+
+/**
+ * Get a specific file by ID.
+ * @route GET /getfile/:fileID
+ * @param {string} fileID
+ * @param {string} filePasshash
+ * @param {string} token
+ * @returns {Promise<HTTPResponse>}
+ */
 async function getfile(fileID: string, filePasshash: string, token: string): Promise<HTTPResponse> {
     let file = new File;
     let user = new User;
@@ -67,6 +76,7 @@ async function getfile(fileID: string, filePasshash: string, token: string): Pro
     const usersCollection = await client.db(user.teamName).collection("users");
     const foundUser = await usersCollection.findOne({ _id: new ObjectId(String(user._id)) });
 
+    // If user is allowed to read file, return it
     if (foundUser.permissions.read) {
         return fileContents(file);
     }
@@ -77,6 +87,12 @@ async function getfile(fileID: string, filePasshash: string, token: string): Pro
     }
 }
 
+
+/**
+ * Get file contents from properties of File
+ * @param {File} file 
+ * @returns {Promise<HTTPResponse>}
+ */
 async function fileContents(file: File): Promise<HTTPResponse> {
     const data = await readFile(file.path + file.fileName);
     return {

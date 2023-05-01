@@ -4,6 +4,12 @@ import File from '../classes/file';
 import User from '../classes/user';
 import HTTPResponse from '../interfaces/httpResponse';
 
+
+/**
+ * Get properties of all files belonging to team user is in.
+ * @param {string} token
+ * @returns {Promise<HTTPResponse>}
+ */
 async function getfiles(token: string): Promise<HTTPResponse> {    
     let user = new User;
 

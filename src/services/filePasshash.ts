@@ -1,11 +1,18 @@
 import { client } from "../config/mongodb";
-import readFile from '../services/readfile';
 import HTTPResponse from "../interfaces/httpResponse";
 const jwt = require('jsonwebtoken');
 import { ObjectId } from "mongodb";
 import User from "../classes/user";
 import File from "../classes/file";
 
+
+/**
+ * Get or set passhash of a file.
+ * @param {string} fileID
+ * @param {string} token
+ * @param {string?} passhash
+ * @returns {Promise<HTTPResponse>}
+ */
 async function filePasshash(fileID: string, token: string, passhash?: string): Promise<HTTPResponse> {
     let file = new File;
     let user = new User;
@@ -23,6 +30,7 @@ async function filePasshash(fileID: string, token: string, passhash?: string): P
         }
     })
 
+    // Find file in given team's files
     const filesCollection = await client.db(user.teamName).collection("files");
     const foundFile = await filesCollection.findOne({ _id: fileID });
     if (foundFile) {
@@ -42,7 +50,10 @@ async function filePasshash(fileID: string, token: string, passhash?: string): P
     const foundUser = await usersCollection.findOne({ _id: new ObjectId(String(user._id)) });
 
 
+    // If passhash was provided, attempt to upsert passhash to file
+    // Otherwise, return passhash of file
     if (typeof passhash === "undefined") {
+        // Check user has permission to see passhash of file
         if (foundUser.permissions.read) {
             return {
                 responseCode: 200,
@@ -54,12 +65,12 @@ async function filePasshash(fileID: string, token: string, passhash?: string): P
                 data: false
             }
         }
-
     } else {
+        // Check user has permission to modify passhash of file
         if (foundUser.permissions.write) {
+            // Set passhash, or unset if nullable
             const setData = passhash ? { $set: { ["passhash"]: passhash } } : { $unset: { ["passhash"]: null } };
             await filesCollection.updateOne({ _id: fileID }, setData)
-
             return {
                 responseCode: 200,
                 data: true
