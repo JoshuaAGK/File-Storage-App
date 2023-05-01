@@ -123,18 +123,20 @@ router.post("/logout", async (req: any, res: any) => {
 /**
  * Register a new user with their details.
  * @route POST /signup
+ * @param {string} teamName
  * @param {string} fname
  * @param {string} lname
  * @param {string} email
  * @param {string} passhash
  */
 router.post("/signup", async (req: any, res: any) => {
+    const teamName = req.body.teamName;
     const fname = req.body.fname ?? "Fname";
     const lname = req.body.lname ?? "Lname";
     const email = req.body.email.toLowerCase();
     const passhash = req.body.passhash;
 
-    const response = await signup(fname, lname, email, passhash);
+    const response = await signup(teamName, fname, lname, email, passhash);
 
     res.status(response.responseCode).send(response.data);
 })

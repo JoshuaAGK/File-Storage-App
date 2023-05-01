@@ -160,7 +160,7 @@ async function getShareLink(that) {
 
     const passhash = result.data;
 
-    let shareLink = `http://localhost:3000/getfile/${that.id}`;
+    let shareLink = `${window.location.origin}/api/getfile/${that.id}`;
     if (passhash) {
         shareLink += `?passhash=${passhash}`;
     }
@@ -205,13 +205,14 @@ async function login() {
 }
 
 async function register() {
+    const teamName = document.querySelector("#register-team").value;
     const email = document.querySelector("#register-email").value;
     const password = document.querySelector("#register-password").value;
     const fname = document.querySelector("#register-fname").value;
     const lname = document.querySelector("#register-lname").value;
     const passhash = await createHash(password);
 
-    const formData = { fname, lname, email, passhash };
+    const formData = { teamName, fname, lname, email, passhash };
 
     const result = await axios.post("/api/signup", formData, {
         validateStatus: false
